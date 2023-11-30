@@ -1,40 +1,37 @@
-int ledPin = 13;
-int buttonPin = 2;
-
-int ledToggle;
-int previousState = HIGH;
-unsigned int previousPress;
-volatile int buttonFlag;
-int buttonDebounce = 20;
-
-void setup() 
-{
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(2), button_ISR, CHANGE);
-}
-
-void loop() 
-{
-  if((millis() - previousPress) > buttonDebounce && buttonFlag)
-  {
-    previousPress = millis();
-    if(digitalRead(buttonPin) == LOW && previousState == HIGH)
-    {
-      ledToggle =! ledToggle;
-      digitalWrite(ledPin, ledToggle);
-      previousState = LOW;
-    }
-    
-    else if(digitalRead(buttonPin) == HIGH && previousState == LOW)
-    {
-      previousState = HIGH;
-    }
-    buttonFlag = 0;
+const byte ledPin = 13;
+const byte buttonPin = 2;
+ 
+ 
+volatile bool toggleState = false;
+ 
+void checkSwitch() {
+  // Check status of switch
+  // Toggle LED if button pressed
+ 
+  if (digitalRead(buttonPin) == LOW) {
+    // Switch was pressed
+    // Change state of toggle
+    toggleState = !toggleState;
+    // Indicate state on LED
+    digitalWrite(ledPin, toggleState);
   }
 }
-
-void button_ISR()
-{
-  buttonFlag = 1;
+ 
+void setup() {
+  
+  pinMode(ledPin, OUTPUT);
+  
+  pinMode(buttonPin, INPUT_PULLUP);
+ 
+  
+  attachInterrupt(digitalPinToInterrupt(buttonPin),checkSwitch, FALLING); 
+}
+ 
+void loop() {
+  
+  
+  Serial.println("Delay Started");
+  delay(5000);
+  Serial.println("Delay Finished");
+  Serial.println("..............");
 }
